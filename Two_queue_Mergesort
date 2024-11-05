@@ -1,0 +1,102 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main(){
+    int n;
+    cin >> n;
+
+    queue<int>qA,qB;
+
+    for (int i = 0; i < n; ++i) {
+        int a;
+        cin >> a;
+        qA.push(a);
+    }
+
+    vector<pair<char, char> > moves;
+
+    int width=1; while(width < n){
+        int index = 0;while(index < n) {
+            //按width宽度，将qA中分块，并隔开分配到qA，qB中
+            for (int i = 0; i < width; ++i) {
+                //A_A for width times
+                qA.push(qA.front());
+                qA.pop();
+                moves.emplace_back('A','A');
+//                cout << "A_A1" << endl;
+
+                index++;
+                if(index == n) break;
+            }
+            if(index == n) break;  // 到点了，需全部退出
+            for (int i = 0; i < width; ++i) {
+                qB.push(qA.front());
+                qA.pop();
+                moves.emplace_back('A','B');
+//                cout << "A_B" << endl;
+
+                index++;
+                if(index == n) break;
+            }
+        }
+
+        index=0;while(index < n){
+            int n1 = 0;
+            int n2 = 0;
+            for (int i = 0; i < width * 2; ++i) {
+                //判空
+                if(qB.empty()){
+                    int tmp = index;
+                    for (int j = 0; j < n - tmp; ++j) {
+                        // A_A
+                        qA.push(qA.front());
+                        qA.pop();
+                        moves.emplace_back('A','A');
+//                        cout << "A_A2" <<endl;
+                        index++;
+                    }
+                    break;
+                }
+
+
+                if( n2 == width || (qA.front() < qB.front() && n1 < width)){
+                    //A_A
+                    qA.push(qA.front());
+                    qA.pop();
+                    moves.emplace_back('A','A');
+//                    cout << "A_A3" <<endl;
+
+                    index++;
+                    n1++;
+                    if(index == n) break;
+                } else if(n1 == width || (qA.front() >= qB.front() && n2 < width)){
+                    //B_A
+                    qA.push(qB.front());
+                    qB.pop();
+                    moves.emplace_back('B','A');
+//                    cout << "B_A" << endl;
+
+                    index++;
+                    n2++;
+                    if(index == n) break;
+                }
+            }
+        }
+        cout << endl;
+        width<<=1;
+    }
+
+    cout << moves.size() << endl;
+    for (auto i: moves) {
+        cout << i.first << ' ' << i.second << endl;
+    }
+
+//    while(!qA.empty()){
+//        cout << qA.front() << ' ';
+//        qA.pop();
+//    }
+
+    return 0;
+}
+//输入输出调试，GDB调试混用
